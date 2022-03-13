@@ -1,0 +1,57 @@
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+:root {
+    --grid-size: 80vmin;
+    --gap-size: 2vmin;
+    --cell-size: calc(var(--grid-size) / var(--num-cells));
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+}
+
+.grid {
+    background-color: #ccc;
+    display: grid;
+    grid-template-columns: repeat(var(--num-cells),var(--cell-size));
+    grid-template-rows: repeat(var(--num-cells),var(--cell-size));
+    gap: var(--gap-size);
+    padding: var(--gap-size);
+    border-radius: var(--gap-size);
+    position: relative;
+}
+
+.cell {
+    background-color: #aaa;
+    border-radius: 1vmin;
+}
+
+.tile {
+    --i: 3;
+    --j: 1;
+
+    transform: translateX(calc( var( --i )*(var(--cell-size) + var(--gap-size) ) + var(--gap-size))) 
+    translateY(calc( var( --j )*(var(--cell-size) + var(--gap-size) ) + var(--gap-size) )) scale(1);
+
+    position: absolute;
+
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border-radius: 1vmin;
+
+    font-weight: bold;
+    font-size: calc(var(--cell-size) * 0.4);
+    line-height: var(--cell-size);
+    text-align: center;
+
+    transition: transform 0.2s ease-in-out;
+}
