@@ -6,7 +6,7 @@
 }
 
 :root {
-    --grid-size: 80vmin;
+    --grid-size: 75vmin;
     --gap-size: 2vmin;
     --cell-size: calc(var(--grid-size) / var(--num-cells));
 }
@@ -14,6 +14,7 @@
 body {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: #333;
@@ -59,4 +60,29 @@ body {
         transform: scale(0);
         opacity: 0.5;
     }
+}
+
+.score-container {
+    margin-bottom: 2vmin;
+    width: calc( var(--grid-size) + var(--gap-size) * ( var(--num-cells) + 1 ) );
+
+    display: flex;
+    justify-content: flex-end;
+}
+
+.score {
+    width: calc( var(--cell-size) + 1.0 * var(--gap-size) );
+    height: 6vmin;
+
+    padding-right: 1vmin;
+    border-radius: 1vmin;
+
+    font-size: 4vmin;
+    color: white;
+    font-weight: bold;
+    text-align: right;
+    line-height: 6vmin;
+    letter-spacing: 0.2vmin;
+
+    background-color: #aaa;
 }

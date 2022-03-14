@@ -2,7 +2,11 @@
 const NUM_CELLS = 4;
 const IDS_ALL = [];
 const GRID_OBJ = document.querySelector(".grid");
-const HU = Math.trunc( Math.random()*360 / 20 ) *20;
+const HU = Math.trunc( Math.random()*300 / 50 ) *50;
+
+let score = 0;
+const SCORE_OBJ = document.querySelector(".score");
+SCORE_OBJ.textContent = `+${score}`;
 
 document.documentElement.style.setProperty('--num-cells', NUM_CELLS);
 
@@ -54,7 +58,7 @@ function createTile () {
     if (Math.random() < 0.2) value = 4;
     else value = 2;
 
-    let color = ( Math.log2(value) - 1)*(20 - 80)/(11-1) + 80;
+    let color = value > 2048 ? 90 : ( Math.log2(value) - 1)*(20 - 80)/(11-1) + 80;
     let fontColor = color >= 50 ? 10 : 90;
     
     let tile = document.createElement("div");
@@ -71,14 +75,17 @@ let block = false;
 document.addEventListener('keydown', (e) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
     if (block) return;
+    handleInteraction(e.key);
+});
 
+function handleInteraction(key) {
     block = true;
-    let changes = moveTiles(e.key);
+    let changes = moveTiles(key);
     setTimeout(() => {
         block = false;
         if (changes) createTile();
     },201);
-});
+}
 
 function moveTiles(key) {
 
@@ -112,15 +119,18 @@ function moveTiles(key) {
             
             for (let i = 0 ; i < tilesInJ.length ; i++ ) {
                 let merge = false;
-                if (i < tilesInJ.length - 1 ) {
+                if (i < tilesInJ.length - 1) {
                     if ( tilesInJ[i].textContent == tilesInJ[i+1].textContent ) {
                         let value = parseInt( tilesInJ[i].textContent )*2;
-                        let color = ( Math.log2(value) - 1)*(20 - 80)/(11-1) + 80;
+                        let color = value > 2048 ? 90 : ( Math.log2(value) - 1)*(20 - 80)/(11-1) + 80;
                         let fontColor = color >= 50 ? 10 : 90;
 
                         tilesInJ[i].textContent = value;
                         tilesInJ[i].style.setProperty('background-color', `hsl(${HU}, 50%, ${color}%)`);
                         tilesInJ[i].style.setProperty('color', `hsl(${HU}, 50%, ${fontColor}%)`);
+
+                        score += value;
+                        SCORE_OBJ.textContent = `+${score}`;
 
                         tilesInJ[i+1].remove();
                         merge = true;
