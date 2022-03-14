@@ -67,16 +67,22 @@ function createTile () {
     GRID_OBJ.append(tile);
 }
 
+let block = false;
 document.addEventListener('keydown', (e) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
-    moveTiles(e.key);
+    if (block) return;
+
+    block = true;
+    let changes = moveTiles(e.key);
+    setTimeout(() => {
+        block = false;
+        if (changes) createTile();
+    },201);
 });
 
 function moveTiles(key) {
 
-    let tiles = [...GRID_OBJ.querySelectorAll(".tile")];
-    if ( tiles.length == 0) return;
-
+    let changes = false;
     let mainDir, seconDir, dir;
 
     if (key === "ArrowLeft") {
@@ -89,11 +95,13 @@ function moveTiles(key) {
         mainDir = "i"; seconDir = "j"; dir = -1;
     }
 
+    let tiles = [...GRID_OBJ.querySelectorAll(".tile")];
+
     for (let j = 0 ; j < NUM_CELLS ; j++) {
-        let tilesInJ = tiles.filter(tile => parseInt( tile.style.getPropertyValue(`--${mainDir}`) ) == j );
+        let tilesInJ = tiles.filter(tile => tile.style.getPropertyValue(`--${mainDir}`)  == j );
         tilesInJ.sort((a,b) => {
-            if (parseInt(a.style.getPropertyValue(`--${seconDir}`)) > parseInt(b.style.getPropertyValue(`--${seconDir}`))) return dir;
-            if (parseInt(a.style.getPropertyValue(`--${seconDir}`)) < parseInt(b.style.getPropertyValue(`--${seconDir}`))) return -dir;
+            if ( a.style.getPropertyValue(`--${seconDir}`) > b.style.getPropertyValue(`--${seconDir}`) ) return dir;
+            if ( a.style.getPropertyValue(`--${seconDir}`) < b.style.getPropertyValue(`--${seconDir}`) ) return -dir;
             return 0;
         });
         if (tilesInJ.length != 0) {
@@ -103,10 +111,30 @@ function moveTiles(key) {
             else edgePosition = 0;
             
             for (let i = 0 ; i < tilesInJ.length ; i++ ) {
-                tilesInJ[i].style.setProperty(`--${seconDir}`, edgePosition);
+                let merge = false;
+                if (i < tilesInJ.length - 1 ) {
+                    if ( tilesInJ[i].textContent == tilesInJ[i+1].textContent ) {
+                        let value = parseInt( tilesInJ[i].textContent )*2;
+                        let color = ( Math.log2(value) - 1)*(20 - 80)/(11-1) + 80;
+                        let fontColor = color >= 50 ? 10 : 90;
+
+                        tilesInJ[i].textContent = value;
+                        tilesInJ[i].style.setProperty('background-color', `hsl(${HU}, 50%, ${color}%)`);
+                        tilesInJ[i].style.setProperty('color', `hsl(${HU}, 50%, ${fontColor}%)`);
+
+                        tilesInJ[i+1].remove();
+                        merge = true;
+                        changes = true;
+                    }
+                }
+                if (tilesInJ[i].style.getPropertyValue(`--${seconDir}`) != edgePosition) {
+                    tilesInJ[i].style.setProperty(`--${seconDir}`, edgePosition);
+                    changes = true;
+                }
                 edgePosition += dir;
+                if (merge) i++;
             }
         }
     }
+    return changes;
 }
-

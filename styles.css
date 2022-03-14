@@ -36,11 +36,8 @@ body {
 }
 
 .tile {
-    --i: 3;
-    --j: 1;
-
-    transform: translateX(calc( var( --i )*(var(--cell-size) + var(--gap-size) ) + var(--gap-size))) 
-    translateY(calc( var( --j )*(var(--cell-size) + var(--gap-size) ) + var(--gap-size) )) scale(1);
+    top:  calc( var( --j )*(var(--cell-size) + var(--gap-size) ) + var(--gap-size) ) ;
+    left:  calc( var( --i )*(var(--cell-size) + var(--gap-size) ) + var(--gap-size) ) ;
 
     position: absolute;
 
@@ -53,5 +50,13 @@ body {
     line-height: var(--cell-size);
     text-align: center;
 
-    transition: transform 0.2s ease-in-out;
+    transition: 0.2s ease-in-out;
+    animation: show 0.2s ease-in-out;
+}
+
+@keyframes show {
+    0%{
+        transform: scale(0);
+        opacity: 0.5;
+    }
 }
